@@ -54,7 +54,7 @@ async function Navbar() {
               </Link>
             </Button>
 
-            {/*Sign Button*/}
+            
             <Button variant="ghost" className="flex items-center gap-2" asChild>
               <Link href={app.signIn}>
                 <LogIn className="w-4 h-4" />
