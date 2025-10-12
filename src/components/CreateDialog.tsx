@@ -20,7 +20,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea";
 import { createPlant } from "@/actions/plant.actions";
-
+import toast from "react-hot-toast";
 // Note: we intentionally do not import server-side Prisma-based helpers here.
 // Use the API route at /api/plants which runs on the server and uses Prisma.
 
@@ -77,9 +77,10 @@ export default function CreateDialog() {
     try {
       const newPlant = await createPlant(formData);
       console.log("plant created: ", newPlant);
-      
+      toast.success("Plant created successfully");
     } catch (error) {
       console.error("error creating plant", error);
+      toast.error("Failed to create plant");
     }
   };
 
