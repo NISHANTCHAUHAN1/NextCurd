@@ -1,4 +1,5 @@
 // import { getPlants } from "@/actions/plant.aciton";
+import { getPlants } from "@/actions/plant.actions";
 import InventoryTable from "@/components/InventoryTable";
 import { stackServerApp } from "@/stack/server";
 import { SignUp } from "@stackframe/stack";
@@ -6,14 +7,14 @@ import React from "react";
 
 async function page() {
   const user = await stackServerApp.getUser();
-//   const plants = await getPlants();
+  const plants = await getPlants();
 
   return (
     <>
       {user ? (
         <div className="mt-7 max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-10 gap-6">
           <div className="lg:col-span-full">
-            <InventoryTable />        
+            <InventoryTable plants={plants} />        
           </div>
         </div>
       ) : (
