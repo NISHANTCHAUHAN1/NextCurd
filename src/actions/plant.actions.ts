@@ -1,6 +1,9 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { getUserId } from "./user.actions";
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@prisma/client";
 
 export async function getPlants(serachTerm?: String) {
   try {
@@ -32,4 +35,26 @@ export async function getPlantById(id: string) {
   return await prisma.plants.findUnique({
     where: { id },
   });
+}
+
+export async function createPlant(data: Prisma.PlantsCreateInput) {
+    console.log("creating plant");
+    console.log(data);
+
+    try {
+        const currentUserID = await getUserId();
+        if(!currentUserID) return
+        
+        const newPlant = await prisma.plants.create({
+            data: {
+                ...data,
+                userId: currentUserID,
+            }
+        })
+        revalidatePath("/plants")
+        return newPlant
+    } catch (error) {
+        console.error("Error in Created plant", error);
+        throw error;
+    }
 }

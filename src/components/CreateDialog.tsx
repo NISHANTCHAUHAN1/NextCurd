@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,9 +17,18 @@ import { Combobox } from "./ui/combo-box";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea";
+import { createPlant } from "@/actions/plant.actions";
+
+// Note: we intentionally do not import server-side Prisma-based helpers here.
+// Use the API route at /api/plants which runs on the server and uses Prisma.
 
 export default function CreateDialog() {
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -28,15 +39,57 @@ export default function CreateDialog() {
     imageUrl: "",
   });
 
+  const handleChange = (field: string, value: string | number) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
+//   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     try {
+//       console.log("adding plant");
+
+//       const res = await fetch("/api/plants", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(formData),
+//       });
+
+//       if (!res.ok) {
+//         const text = await res.text();
+//         throw new Error(`Create plant failed: ${res.status} ${text}`);
+//       }
+
+//       const newPlant = await res.json();
+
+//       // close dialog and refresh
+//       setOpen(false);
+//       router.refresh();
+//       return newPlant;
+//     } catch (error) {
+//       console.log("errpr in crete plant", error);
+//       throw error;
+//     }
+//   };
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const newPlant = await createPlant(formData);
+      console.log("plant created: ", newPlant);
+      
+    } catch (error) {
+      console.error("error creating plant", error);
+    }
+  };
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant="default"
           className="ml-auto font-bold flex items-center gap-2"
           asChild
-
         >
           <span>
             <Sprout className="w-4 h-4" />
@@ -52,7 +105,7 @@ export default function CreateDialog() {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <form >
+        <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="name">Name</Label>
@@ -60,10 +113,16 @@ export default function CreateDialog() {
                 id="name"
                 type="text"
                 placeholder="Enter name"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor="category">Category</Label>
+              <Combobox
+                value={formData.category}
+                onChange={(val) => handleChange("category", val)}
+              />
             </div>
           </div>
           <Label htmlFor="description">Description</Label>
@@ -71,6 +130,8 @@ export default function CreateDialog() {
             id="description"
             placeholder="Type your message here."
             rows={5}
+            value={formData.description}
+            onChange={(e) => handleChange("description", e.target.value)}
           />
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -79,6 +140,8 @@ export default function CreateDialog() {
                 id="stock"
                 type="number"
                 placeholder="Enter stock quantity"
+                value={formData.stock}
+                onChange={(e) => handleChange("stock", Number(e.target.value))}
               />
             </div>
             <div>
@@ -87,10 +150,22 @@ export default function CreateDialog() {
                 id="price"
                 type="number"
                 placeholder="Enter price"
+                value={formData.price}
+                onChange={(e) => handleChange("price", Number(e.target.value))}
               />
             </div>
           </div>
-          
+
+          {/*Image Upload*/}
+          {/* <div className="py-5">
+          <ImageUpload
+            endpoint="postImage"
+            value={formData.imageUrl}
+            onChange={(url) => {
+              handleChange("imageUrl", url);
+            }}
+          />
+          </div> */}
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
