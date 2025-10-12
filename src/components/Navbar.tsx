@@ -4,11 +4,14 @@ import { Button } from "./ui/button";
 import { HomeIcon, LogIn, LogOut, Sprout } from "lucide-react";
 import ModeToggle from "./ModeTogggle";
 import { stackServerApp } from "@/stack/server";
-
+import { getUserDetails } from "@/actions/user.actions";
+import { UserButton } from "@stackframe/stack";
 
 async function Navbar() {
   const user = await stackServerApp.getUser();
   const app = stackServerApp.urls;
+  const userProfile = await getUserDetails(user?.id);
+
   return (
     <nav className="sticky top-0 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -22,6 +25,10 @@ async function Navbar() {
               🌱 Plantventory
             </Link>
           </div>
+
+          {userProfile?.name && (
+            <span>{`Hello, ${userProfile.name.split(" ")[0]}`}</span>
+          )}
 
           {/*Navbar components*/}
           <div className="hidden md:flex items-center space-x-4">
@@ -41,26 +48,39 @@ async function Navbar() {
 
             <ModeToggle />
 
-            {/*Sign out Button*/}
-            <Button
-              variant="outline"
-              className="flex items-center gap-2"
-              asChild
-            >
-              <Link href={app.signOut}>
-                <LogOut className="w-4 h-4" />
 
-                <span className="hidden lg:inline">Sign Out</span>
-              </Link>
-            </Button>
+            {user ? (
+              <>
+               {/*Sign Button*/}
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  asChild
+                >
+                  <Link href={app.signOut}>
+                    <LogOut className="w-4 h-4" />
 
-            
-            <Button variant="ghost" className="flex items-center gap-2" asChild>
-              <Link href={app.signIn}>
-                <LogIn className="w-4 h-4" />
-                <span className="hidden lg:inline">Sign In</span>
-              </Link>
-            </Button>
+                    <span className="hidden lg:inline">Sign Out</span>
+                  </Link>
+                </Button>
+
+                <UserButton />
+              </>
+            ) : (
+              <>
+                {/*Sign out Button*/}
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  asChild
+                >
+                  <Link href={app.signIn}>
+                    <LogIn className="w-4 h-4" />
+                    <span className="hidden lg:inline">Sign In</span>
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
