@@ -14,6 +14,7 @@ import { Search } from "lucide-react";
 import { Combobox } from "./ui/combo-box";
 import { useState } from "react";
 import { getPlants } from "@/actions/plant.actions";
+import { useRouter } from "next/navigation";
 
 type GetPlantsResponse = Awaited<ReturnType<typeof getPlants>>;
 
@@ -22,6 +23,8 @@ interface InventoryTableProps {
 }
 
 export default function InventoryTable({ plants }: InventoryTableProps) {
+  const router = useRouter();
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -66,21 +69,27 @@ export default function InventoryTable({ plants }: InventoryTableProps) {
         </TableHeader>
 
         <TableBody>
-          {filteredPlants?.map((plant) => (
-            <TableRow key={plant.id}>
-              <TableCell>{plant.id}</TableCell>
-              <TableCell>{plant.name}</TableCell>
-              <TableCell>{plant.category}</TableCell>
-              <TableCell>{plant.price}</TableCell>
-              <TableCell className="font-bold">{plant.stock}</TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end space-x-4">
-                  <h1>Edit Button</h1>
-                  <h1>Delete Button</h1>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {filteredPlants?.map((plant) => {
+            const slugifiedName = plant.name.toLowerCase().replace(/\s+/g, "-");
+            const slug = `${plant.id}--${slugifiedName}`;
+            const plantUrl = `/plants/${slug}`;
+
+            return (
+              <TableRow key={plant.id} onClick={() => router.push(plantUrl)}>
+                <TableCell>{plant.id}</TableCell>
+                <TableCell>{plant.name}</TableCell>
+                <TableCell>{plant.category}</TableCell>
+                <TableCell>{plant.price}</TableCell>
+                <TableCell className="font-bold">{plant.stock}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end space-x-4">
+                    <h1>Edit Button</h1>
+                    <h1>Delete Button</h1>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
