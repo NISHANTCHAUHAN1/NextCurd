@@ -1,6 +1,6 @@
 'use server';
 
-// import { stackServerApp } from '@/stack';
+import { stackServerApp } from '@/stack/server';
 import { neon } from '@neondatabase/serverless';
 
 export async function getUserDetails(userId: string | undefined) {
@@ -18,11 +18,11 @@ export async function getUserDetails(userId: string | undefined) {
   return user;
 } 
 
-// export async function getUserId() {
-//   const user = await stackServerApp.getUser(); //get user details from neon
-//   const userId = user?.id;
+export async function getUserId() {
+  const user = await stackServerApp.getUser(); //get user details from neon
+  const userId = user?.id;
 
-//   if (!userId) return;
+  if (!userId) return;
 
-//   return userId;
-// }
+  return userId;
+}
