@@ -26,3 +26,10 @@ export async function getPlants(serachTerm?: String) {
     console.log("Error in getPlants", error);
   }
 }
+
+export async function getPlantById(id: string) {
+  // Example using Prisma; adjust based on your data layer
+  return await prisma.plants.findUnique({
+    where: { id },
+  });
+}
