@@ -1,8 +1,11 @@
 import React from 'react'
+import PlantCard from './PlantCard'
 
 const page = () => {
   return (
-    <div>page slug</div>
+    <div>
+        <PlantCard />
+    </div>
   )
 }
 
