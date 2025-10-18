@@ -69,7 +69,7 @@ export default function EditDialog({plant}: EditDialogProps) {
         >
           <span>
             <EditIcon className="w-4 h-4" />
-            Edit Plant
+           
           </span>
         </Button>
       </AlertDialogTrigger>

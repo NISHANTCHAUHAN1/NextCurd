@@ -1,5 +1,6 @@
 "use client";
 
+import { deletePlant } from "@/actions/plant.actions";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -25,7 +26,7 @@ export default function DeleteDialog({ plant }: DeleteDialogProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      
+      await deletePlant(plant.id);
 
       toast.success("Plant deleted successfully");
     } catch (error) {
