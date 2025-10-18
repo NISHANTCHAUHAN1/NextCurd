@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Sprout } from "lucide-react";
+import { EditIcon, Sprout } from "lucide-react";
 import { Combobox } from "./ui/combo-box";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -63,12 +63,12 @@ export default function EditDialog({plant}: EditDialogProps) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant="default"
+          variant="secondary"
           className="ml-auto font-bold flex items-center gap-2"
           asChild
         >
           <span>
-            <Sprout className="w-4 h-4" />
+            <EditIcon className="w-4 h-4" />
             Edit Plant
           </span>
         </Button>
