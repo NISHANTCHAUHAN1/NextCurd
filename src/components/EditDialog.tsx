@@ -19,67 +19,43 @@ import { Input } from "./ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea";
-import { createPlant } from "@/actions/plant.actions";
+import { createPlant, editPlant, getPlantById } from "@/actions/plant.actions";
 import toast from "react-hot-toast";
 
+type Plant = NonNullable<Awaited<ReturnType<typeof getPlantById>>>;
 
-export default function CreateDialog() {
+interface EditDialogProps {
+    plant: Plant;
+}
+
+export default function EditDialog({plant}: EditDialogProps) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    stock: 1,
-    price: 1,
-    category: "",
-    userId: "",
-    imageUrl: "",
+    name: plant.name.trim(),
+    description: (plant.description || "").trim(),
+    stock: plant.stock,
+    price: plant.price,
+    category: plant.category.trim(),
+    userId: plant.userId.trim(),
+    imageUrl: plant.imageUrl || "",
   });
 
   const handleChange = (field: string, value: string | number) => {
     setFormData({ ...formData, [field]: value });
   };
 
-//   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     try {
-//       console.log("adding plant");
-
-//       const res = await fetch("/api/plants", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(formData),
-//       });
-
-//       if (!res.ok) {
-//         const text = await res.text();
-//         throw new Error(`Create plant failed: ${res.status} ${text}`);
-//       }
-
-//       const newPlant = await res.json();
-
-//       // close dialog and refresh
-//       setOpen(false);
-//       router.refresh();
-//       return newPlant;
-//     } catch (error) {
-//       console.log("errpr in crete plant", error);
-//       throw error;
-//     }
-//   };
-
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const newPlant = await createPlant(formData);
-      console.log("plant created: ", newPlant);
-      toast.success("Plant created successfully");
+      const newPlant = await editPlant(plant.id, formData);
+      console.log("plant editPlant: ", newPlant);
+      toast.success("Plant editPlant successfully");
     } catch (error) {
       console.error("error creating plant", error);
-      toast.error("Failed to create plant");
+      toast.error("Failed to editPlant plant");
     }
   };
 
@@ -93,7 +69,7 @@ export default function CreateDialog() {
         >
           <span>
             <Sprout className="w-4 h-4" />
-            Add Plant
+            Edit Plant
           </span>
         </Button>
       </AlertDialogTrigger>
